@@ -1,4 +1,4 @@
-#define CHAN_SIZE 4
+#define CHANNEL_SIZE 4
 #define TRAFFIC_LIGHTS_NUM 6
 
 // Macros to check if the sensor channels are non-empty
@@ -12,12 +12,12 @@
 bool s_north_buf, e_west_buf, e_south_buf, s_west_buf, w_east_buf;
 bool p_buf;
 
-chan s_north_sense = [CHAN_SIZE] of {bool};  // South to North (Orange Line)
-chan e_west_sense = [CHAN_SIZE] of {bool};   // East to West (Black Line)
-chan e_south_sense = [CHAN_SIZE] of {bool};  // East to South (Purple Line)
-chan s_west_sense = [CHAN_SIZE] of {bool};   // South to West (Red Line)
-chan w_east_sense = [CHAN_SIZE] of {bool};   // West to East (Blue Line)
-chan p_sense = [CHAN_SIZE] of {bool};        // Pedestrian crossing
+chan s_north_sense = [CHANNEL_SIZE] of {bool};  // South to North (Orange Line)
+chan e_west_sense = [CHANNEL_SIZE] of {bool};   // East to West (Black Line)
+chan e_south_sense = [CHANNEL_SIZE] of {bool};  // East to South (Purple Line)
+chan s_west_sense = [CHANNEL_SIZE] of {bool};   // South to West (Red Line)
+chan w_east_sense = [CHANNEL_SIZE] of {bool};   // West to East (Blue Line)
+chan p_sense = [CHANNEL_SIZE] of {bool};        // Pedestrian crossing
 
 bool s_north_lock = false, e_west_lock = false, e_south_lock = false;
 bool s_west_lock = false, w_east_lock = false, p_lock = false;
@@ -278,6 +278,8 @@ active proctype Pedestrian_gen() {
 
 // LTL properties for verification
 
+// safety
+
 // Ensure that not all three traffic lights (South to North, South to West, East to South) are green simultaneously
 ltl no_three_lights_green {
     [] !((s_north_light == green) && (s_west_light == green) && (e_south_light == green))
@@ -292,6 +294,8 @@ ltl no_all_lights_green {
 ltl no_east_south_and_pedestrian_green {
     [] !((e_south_light == green) && (p_light == green))
 };
+
+// liveness
 
 // If there is a continuous request from the South to North sensor, the South to North light will eventually turn green
 ltl south_to_north_request_eventually_green {
@@ -378,3 +382,60 @@ ltl fairness_west_to_east {
 ltl fairness_pedestrian {
     [] (p_sense_nempty -> <> (p_light == green))
 }
+
+
+
+/// from task description:
+
+// Safety: No two traffic lights can show green in intersecting directions:
+
+ltl no_intersecting_lights_green_1 {
+    [] !((s_north_light == green) && (s_west_light == green))
+}
+
+ltl no_intersecting_lights_green_3 {
+    [] !((s_west_light == green) && (e_west_light == green))
+}
+ltl no_intersecting_lights_green_4 {
+    [] !((s_west_light == green) && (w_east_light == green))
+}
+ltl no_intersecting_lights_green_5 {
+    [] !((e_south_light == green) && (w_east_light == green))
+}
+ltl no_intersecting_lights_green_6 {
+    [] !((e_west_light == green) && (w_east_light == green))
+}
+ltl no_intersecting_lights_green_7 {
+    [] !((e_west_light == green) && (p_light == green))
+}
+ltl no_intersecting_lights_green_8 {
+    [] !((e_south_light == green) && (p_light == green))
+}
+ltl no_intersecting_lights_green_9 {
+    [] !((s_west_light == green) && (p_light == green))
+}
+
+/// Liveness: Eventually, each traffic light will turn green if there is a continuous request:
+
+ltl south_to_north_liveness {
+    [] (s_north_sense_nempty -> <> (s_north_light == green))
+}
+ltl east_to_west_liveness {
+    [] (e_west_sense_nempty -> <> (e_west_light == green))
+}
+ltl east_to_south_liveness {
+    [] (e_south_sense_nempty -> <> (e_south_light == green))
+}
+
+// Fairness: No traffic light remains green infinitely often without serving others
+
+ltl south_to_north_fairness {
+    [] (<> s_north_sense_nempty -> <> (s_north_light == green))
+}
+ltl east_to_west_fairness {
+    [] (<> e_west_sense_nempty -> <> (e_west_light == green))
+}
+ltl east_to_south_fairness {
+    [] (<> e_south_sense_nempty -> <> (e_south_light == green))
+}
+
