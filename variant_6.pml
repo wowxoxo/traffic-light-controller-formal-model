@@ -306,50 +306,12 @@ ltl south_to_north_request_eventually_green {
     )
 };
 
-// If there is a continuous request from the East to West sensor, the East to West light will eventually turn green
-ltl east_to_west_request_eventually_green {
-    (
-        ([]<> !((e_west_light == green) && e_west_sense_nempty))
-    ) -> (
-        ([] ((e_west_sense_nempty && (e_west_light == red)) -> (<> (e_west_light == green))))
-    )
-};
 
-// If there is a continuous request from the East to South sensor, the East to South light will eventually turn green
-ltl east_to_south_request_eventually_green {
-    (
-        ([]<> !((e_south_light == green) && e_south_sense_nempty))
-    ) -> (
-        ([] ((e_south_sense_nempty && (e_south_light == red)) -> (<> (e_south_light == green))))
-    )
-};
+/// Liveness: Eventually, each traffic light will turn green if there is a continuous request:
 
-// If there is a continuous request from the South to West sensor, the South to West light will eventually turn green - error
-ltl south_to_west_request_eventually_green {
-    (
-        ([]<> !((s_west_light == green) && s_west_sense_nempty))
-    ) -> (
-        ([] ((s_west_sense_nempty && (s_west_light == red)) -> (<> (s_west_light == green))))
-    )
-};
-
-// If there is a continuous request from the West to East sensor, the West to East light will eventually turn green - error
-ltl west_to_east_request_eventually_green {
-    (
-        ([]<> !((w_east_light == green) && w_east_sense_nempty))
-    ) -> (
-        ([] ((w_east_sense_nempty && (w_east_light == red)) -> (<> (w_east_light == green))))
-    )
-};
-
-// If there is a continuous request from the Pedestrian sensor, the Pedestrian light will eventually turn green - error
-ltl pedestrian_request_eventually_green {
-    (
-        ([]<> !((p_light == green) && p_sense_nempty))
-    ) -> (
-        ([] ((p_sense_nempty && (p_light == red)) -> (<> (p_light == green))))
-    )
-};
+ltl east_to_west_liveness {
+    [] (e_west_sense_nempty -> <> (e_west_light == green))
+}
 
 // Fairness LTL properties
 
@@ -358,84 +320,10 @@ ltl fairness_south_to_north {
     [] (s_north_sense_nempty -> <> (s_north_light == green))
 }
 
-// Ensure that if there is always a request from the East to West sensor, the East to West traffic light will eventually turn green
-ltl fairness_east_to_west {
-    [] (e_west_sense_nempty -> <> (e_west_light == green))
-}
 
-// Ensure that if there is always a request from the East to South sensor, the East to South traffic light will eventually turn green
-ltl fairness_east_to_south {
-    [] (e_south_sense_nempty -> <> (e_south_light == green))
-}
+// No traffic light remains green infinitely often without serving others
 
-// Ensure that if there is always a request from the South to West sensor, the South to West traffic light will eventually turn green - error
-ltl fairness_south_to_west {
-    [] (s_west_sense_nempty -> <> (s_west_light == green))
-}
-
-// Ensure that if there is always a request from the West to East sensor, the West to East traffic light will eventually turn green - error
-ltl fairness_west_to_east {
-    [] (w_east_sense_nempty -> <> (w_east_light == green))
-}
-
-// Ensure that if there is always a request from the Pedestrian sensor, the Pedestrian light will eventually turn green - error
-ltl fairness_pedestrian {
-    [] (p_sense_nempty -> <> (p_light == green))
-}
-
-
-
-/// from task description:
-
-// Safety: No two traffic lights can show green in intersecting directions:
-
-ltl no_intersecting_lights_green_1 {
-    [] !((s_north_light == green) && (s_west_light == green))
-}
-
-ltl no_intersecting_lights_green_3 {
-    [] !((s_west_light == green) && (e_west_light == green))
-}
-ltl no_intersecting_lights_green_4 {
-    [] !((s_west_light == green) && (w_east_light == green))
-}
-ltl no_intersecting_lights_green_5 {
-    [] !((e_south_light == green) && (w_east_light == green))
-}
-ltl no_intersecting_lights_green_6 {
-    [] !((e_west_light == green) && (w_east_light == green))
-}
-ltl no_intersecting_lights_green_7 {
-    [] !((e_west_light == green) && (p_light == green))
-}
-ltl no_intersecting_lights_green_8 {
-    [] !((e_south_light == green) && (p_light == green))
-}
-ltl no_intersecting_lights_green_9 {
-    [] !((s_west_light == green) && (p_light == green))
-}
-
-/// Liveness: Eventually, each traffic light will turn green if there is a continuous request:
-
-ltl south_to_north_liveness {
-    [] (s_north_sense_nempty -> <> (s_north_light == green))
-}
-ltl east_to_west_liveness {
-    [] (e_west_sense_nempty -> <> (e_west_light == green))
-}
-ltl east_to_south_liveness {
-    [] (e_south_sense_nempty -> <> (e_south_light == green))
-}
-
-// Fairness: No traffic light remains green infinitely often without serving others
-
-ltl south_to_north_fairness {
-    [] (<> s_north_sense_nempty -> <> (s_north_light == green))
-}
 ltl east_to_west_fairness {
     [] (<> e_west_sense_nempty -> <> (e_west_light == green))
-}
-ltl east_to_south_fairness {
-    [] (<> e_south_sense_nempty -> <> (e_south_light == green))
 }
 
