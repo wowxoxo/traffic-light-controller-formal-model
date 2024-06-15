@@ -1,2 +1,4 @@
 pan
 *.trail
+pan.pre
+.DS_Store
