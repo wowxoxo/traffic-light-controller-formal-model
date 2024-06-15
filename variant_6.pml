@@ -61,13 +61,13 @@ active proctype S_North_con() {
                     s_north_lock = true;
                     atomic {
                         s_north_light = green;
-                        printf("South to North (Orange) light green\n");
+                        printf("South to North (Orange) light green 🟢\n");
                     }
                     s_north_sense?s_north_buf; // Wait for the car to pass
                     s_north_lock = false;
                     atomic {
                         s_north_light = red;
-                        printf("South to North (Orange) light red\n");
+                        printf("South to North (Orange) light red 🔴\n");
                     }
                 }
             :: else -> skip;
@@ -81,7 +81,7 @@ active proctype S_North_gen() {
     do
          :: atomic {
              s_north_sense!true;
-             printf("South to North (Orange) car generated\n");
+             printf("South to North (Orange) car generated 🚗\n");
          }
     od;
 }
@@ -99,13 +99,13 @@ active proctype E_West_con() {
                 e_west_lock = true;
                 atomic {
                     e_west_light = green;
-                    printf("East to West (Black) light green\n");
+                    printf("East to West (Black) light green 🟢\n");
                 }
                 e_west_sense?e_west_buf; // Wait for the car to pass
                 e_west_lock = false;
                 atomic {
                     e_west_light = red;
-                    printf("East to West (Black) light red\n");
+                    printf("East to West (Black) light red 🔴\n");
                 }
             }
         :: else -> skip;
@@ -119,7 +119,7 @@ active proctype E_West_gen() {
     do
          :: atomic {
              e_west_sense!true;
-             printf("East to West (Black) car generated\n");
+             printf("East to West (Black) car generated 🚗\n");
          }
     od;
 }
@@ -137,13 +137,13 @@ active proctype E_South_con() {
                     e_south_lock = true;
                     atomic {
                         e_south_light = green;
-                        printf("East to South (Purple) light green\n");
+                        printf("East to South (Purple) light green 🟢\n");
                     }
                     e_south_sense?e_south_buf; // Wait for the car to pass
                     e_south_lock = false;
                     atomic {
                         e_south_light = red;
-                        printf("East to South (Purple) light red\n");
+                        printf("East to South (Purple) light red 🔴\n");
                     }
                 }
             :: else -> skip;
@@ -157,7 +157,7 @@ active proctype E_South_gen() {
     do
          :: atomic {
              e_south_sense!true;
-             printf("East to South (Purple) car generated\n");
+             printf("East to South (Purple) car generated 🚗\n");
          }
     od;
 }
@@ -175,13 +175,13 @@ active proctype S_West_con() {
                     s_west_lock = true;
                     atomic {
                         s_west_light = green;
-                        printf("South to West (Red) light green\n");
+                        printf("South to West (Red) light green 🟢\n");
                     }
                     s_west_sense?s_west_buf; // Wait for the car to pass
                     s_west_lock = false;
                     atomic {
                         s_west_light = red;
-                        printf("South to West (Red) light red\n");
+                        printf("South to West (Red) light red 🔴\n");
                     }
                 }
             :: else -> skip;
@@ -195,7 +195,7 @@ active proctype S_West_gen() {
     do
          :: atomic {
              s_west_sense!true;
-             printf("South to West (Red) car generated\n");
+             printf("South to West (Red) car generated 🚗\n");
          }
     od;
 }
@@ -213,13 +213,13 @@ active proctype W_East_con() {
                     w_east_lock = true;
                     atomic {
                         w_east_light = green;
-                        printf("West to East (Blue) light green\n");
+                        printf("West to East (Blue) light green 🟢\n");
                     }
                     w_east_sense?w_east_buf; // Wait for the car to pass
                     w_east_lock = false;
                     atomic {
                         w_east_light = red;
-                        printf("West to East (Blue) light red\n");
+                        printf("West to East (Blue) light red 🔴\n");
                     }
                 }
             :: else -> skip;
@@ -233,7 +233,7 @@ active proctype W_East_gen() {
     do
          :: atomic {
              w_east_sense!true;
-             printf("West to East (Blue) car generated\n");
+             printf("West to East (Blue) car generated 🚗\n");
          }
     od;
 }
@@ -251,13 +251,13 @@ active proctype Pedestrian_con() {
                     p_lock = true;
                     atomic {
                         p_light = green;
-                        printf("Pedestrian light green\n");
+                        printf("Pedestrian light green 🟢\n");
                     }
                     p_sense?p_buf; // Wait for the pedestrian to cross
                     p_lock = false;
                     atomic {
                         p_light = red;
-                        printf("Pedestrian light red\n");
+                        printf("Pedestrian light red 🔴\n");
                     }
                 }
             :: else -> skip;
@@ -271,7 +271,7 @@ active proctype Pedestrian_gen() {
     do
          :: atomic {
              p_sense!true;
-             printf("Pedestrian generated\n");
+             printf("Pedestrian generated 🚶\n");
          }
     od;
 }
@@ -306,9 +306,7 @@ ltl south_to_north_request_eventually_green {
     )
 };
 
-
-/// Liveness: Eventually, each traffic light will turn green if there is a continuous request:
-
+// Liveness: Eventually, each traffic light will turn green if there is a continuous request
 ltl east_to_west_liveness {
     [] (e_west_sense_nempty -> <> (e_west_light == green))
 }
@@ -320,10 +318,7 @@ ltl fairness_south_to_north {
     [] (s_north_sense_nempty -> <> (s_north_light == green))
 }
 
-
 // No traffic light remains green infinitely often without serving others
-
 ltl east_to_west_fairness {
     [] (<> e_west_sense_nempty -> <> (e_west_light == green))
 }
-
