@@ -1,4 +1,7 @@
 # Solution Architecture
+
+Source code of the model and more info - [https://github.com/wowxoxo/traffic-light-controller-formal-model](https://github.com/wowxoxo/traffic-light-controller-formal-model)
+
 ## Constants and Macros
 ### CHANNEL_SIZE
 ```promela
